@@ -1,26 +1,27 @@
 package com.mini.ubet_backend.Entity;
 
+import com.mini.ubet_backend.Enum.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "drivers")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
-public class Driver {
-
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String licenceNumber;
+    private String name;
 
-    private Double rating;
+    @Column(unique = true)
+    private String email;
 
-    private boolean available;
+    private String password;
 
-    @OneToOne
-    private User user;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

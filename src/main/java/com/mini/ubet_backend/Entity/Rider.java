@@ -1,26 +1,24 @@
 package com.mini.ubet_backend.Entity;
 
+import com.mini.ubet_backend.Enum.RideStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
-@Table(name = "drivers")
+@Table(name ="riders")
 @Data
 @NoArgsConstructor
-public class Driver {
-
+public class Rider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String licenceNumber;
-
-    private Double rating;
-
-    private boolean available;
+    private Double ratings;
 
     @OneToOne
     private User user;
+
 
 }
