@@ -1,5 +1,6 @@
 package com.mini.ubet_backend.Entity;
 
+import com.mini.ubet_backend.DTO.CreateDriverRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class Driver {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String licenceNumber;
+    private String licenseNumber;
 
     private Double rating;
 
@@ -22,5 +23,6 @@ public class Driver {
 
     @OneToOne
     private User user;
+
 
 }

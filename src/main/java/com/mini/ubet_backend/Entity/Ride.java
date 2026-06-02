@@ -1,10 +1,13 @@
 package com.mini.ubet_backend.Entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "rides")
+@Data
+@NoArgsConstructor
 public class Ride {
 
     @Id
