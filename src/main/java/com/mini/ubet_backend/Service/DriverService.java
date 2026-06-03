@@ -1,6 +1,7 @@
 package com.mini.ubet_backend.Service;
 
 import com.mini.ubet_backend.DTO.CreateDriverRequest;
+import com.mini.ubet_backend.DTO.DriverResponse;
 import com.mini.ubet_backend.Entity.Driver;
 import com.mini.ubet_backend.Entity.User;
 import com.mini.ubet_backend.Enum.Role;
@@ -8,6 +9,11 @@ import com.mini.ubet_backend.Repository.DriverRepository;
 import com.mini.ubet_backend.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.springframework.boot.context.properties.bind.Bindable.setOf;
 
 @Service
 public class DriverService {
@@ -23,8 +29,11 @@ public class DriverService {
     }
 
     @Transactional
-    public Driver createDriver(CreateDriverRequest createDriverRequest){
+    public DriverResponse createDriver(CreateDriverRequest createDriverRequest){
         Driver driver = new Driver();
+        if(driverRepository.existsByLicenseNumber(createDriverRequest.licenseNumber())){
+            throw new RuntimeException("Duplicate Driver as licenseNumber is already present");
+        }
         driver.setLicenseNumber(createDriverRequest.licenseNumber());
         driver.setAvailable(true);
         driver.setRating(0.0);
@@ -36,9 +45,18 @@ public class DriverService {
 
         user.setPassword(createDriverRequest.password());
         user.setEmail(createDriverRequest.email());
-        user.setRole(Role.DRIVER);
+        user.setRoles(Set.of(Role.DRIVER));
         User savedUser = userRepository.save(user);
         driver.setUser(savedUser);
-        return driverRepository.save(driver);
+        Driver savedDriver = driverRepository.save(driver);
+
+        return new DriverResponse(
+                savedDriver.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedDriver.getLicenseNumber()
+        );
     }
+
+
 }

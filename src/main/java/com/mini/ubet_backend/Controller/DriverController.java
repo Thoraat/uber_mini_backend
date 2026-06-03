@@ -1,10 +1,14 @@
 package com.mini.ubet_backend.Controller;
 
 import com.mini.ubet_backend.DTO.CreateDriverRequest;
+import com.mini.ubet_backend.DTO.DriverResponse;
 import com.mini.ubet_backend.Entity.Driver;
 import com.mini.ubet_backend.Repository.DriverRepository;
 import com.mini.ubet_backend.Service.DriverService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("driver")
@@ -19,17 +23,14 @@ public class DriverController {
     }
 
 
-    @GetMapping
-    public String test() {
-        return "in the driver test";
-    }
+
 
 
     @PostMapping("/register")
-    public CreateDriverRequest registerDriver(@RequestBody CreateDriverRequest
-                                              request){
+    public DriverResponse registerDriver(
+            @Valid  @RequestBody CreateDriverRequest request){
 
-        Driver driver = driverService.createDriver(request);
-        return request;
+        DriverResponse savedDriver = driverService.createDriver(request);
+        return savedDriver;
     }
 }

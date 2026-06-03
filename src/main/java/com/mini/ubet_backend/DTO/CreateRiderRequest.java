@@ -1,16 +1,15 @@
 package com.mini.ubet_backend.DTO;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateDriverRequest(
+public record CreateRiderRequest(
         @NotBlank
         String name,
         @Email
         String email,
         @NotBlank
-        String password,
-        @NotBlank
-        String licenseNumber
+        String password
 ) {
 }
