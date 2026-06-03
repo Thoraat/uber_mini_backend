@@ -10,16 +10,14 @@ import com.mini.ubet_backend.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
-import static org.springframework.boot.context.properties.bind.Bindable.setOf;
 
 @Service
 public class DriverService {
     private final DriverRepository driverRepository;
     private final UserRepository userRepository;
-//    private final User user;
     public DriverService(
             DriverRepository driverRepository,
             UserRepository userRepository
@@ -30,6 +28,21 @@ public class DriverService {
 
     @Transactional
     public DriverResponse createDriver(CreateDriverRequest createDriverRequest){
+        User user ;
+        if(userRepository.existsByEmail(createDriverRequest.email())){
+            user = userRepository.findByEmail(createDriverRequest.email());
+            if(user.getRoles().contains(Role.DRIVER)){
+                throw new RuntimeException("User Already exists");
+            }
+            user.getRoles().add(Role.DRIVER);
+        }
+        else{
+            user = new User();
+            user.setName(createDriverRequest.name());
+            user.setPassword(createDriverRequest.password());
+            user.setEmail(createDriverRequest.email());
+            user.setRoles(new HashSet<>(Set.of(Role.DRIVER)));
+        }
         Driver driver = new Driver();
         if(driverRepository.existsByLicenseNumber(createDriverRequest.licenseNumber())){
             throw new RuntimeException("Duplicate Driver as licenseNumber is already present");
@@ -37,17 +50,9 @@ public class DriverService {
         driver.setLicenseNumber(createDriverRequest.licenseNumber());
         driver.setAvailable(true);
         driver.setRating(0.0);
-        User user = new User();
-        if(userRepository.existsByEmail(createDriverRequest.email())){
-            throw new RuntimeException("email already Exists");
-        }
-        user.setName(createDriverRequest.name());
+        driver.setUser(user);
 
-        user.setPassword(createDriverRequest.password());
-        user.setEmail(createDriverRequest.email());
-        user.setRoles(Set.of(Role.DRIVER));
         User savedUser = userRepository.save(user);
-        driver.setUser(savedUser);
         Driver savedDriver = driverRepository.save(driver);
 
         return new DriverResponse(

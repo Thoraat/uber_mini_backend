@@ -8,9 +8,9 @@ import com.mini.ubet_backend.Enum.Role;
 import com.mini.ubet_backend.Repository.RiderRepository;
 import com.mini.ubet_backend.Repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -28,14 +28,21 @@ public class RiderService {
     public RiderResponse createRider(CreateRiderRequest request) {
         Rider rider = new Rider();
         rider.setRatings(0.0);
-        User  user  = new User();
+        User  user;
         if(userRepository.existsByEmail(request.email())){
-            throw new RuntimeException("User already exists");
+            user =userRepository.findByEmail(request.email());
+            if(user.getRoles().contains(Role.RIDER)){
+                throw new RuntimeException("Rider already exists");
+            }
+            user.getRoles().add(Role.RIDER);
         }
-        user.setName(request.name());
-        user.setEmail(request.email());
-        user.setPassword(request.password());
-        user.setRoles(Set.of(Role.RIDER));
+        else{
+            user = new User();
+            user.setName(request.name());
+            user.setEmail(request.email());
+            user.setPassword(request.password());
+            user.setRoles(new HashSet<>(Set.of(Role.RIDER)));
+        }
         rider.setUser(user);
         User savedUser = userRepository.save(user);
         riderRepository.save(rider);
